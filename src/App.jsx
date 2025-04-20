@@ -6,6 +6,7 @@ import Home from './Pages/Home'
 import { Toaster } from 'sonner'
 import UserLogoutAuth from './Utils/AuthChecking/UserLogoutAuth'
 import UserLogingAuth from './Utils/AuthChecking/UserLoginAuth'
+import ChattingPage from './Pages/ChattingPage'
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           
           <Route element={<UserLogingAuth/>} >
             <Route path='/home' element={<Home/>}/>
+            <Route path='/chat' element={<ChattingPage/>}/>
           </Route>
           
         </Routes>
