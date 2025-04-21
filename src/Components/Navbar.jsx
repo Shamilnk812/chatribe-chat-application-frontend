@@ -5,7 +5,7 @@ import { IoMdNotificationsOutline } from 'react-icons/io';
 
 
 
-const Navbar = ({searchQuery, setSearchQuery}) => {
+const Navbar = () => {
     
     
     
@@ -20,22 +20,6 @@ const Navbar = ({searchQuery, setSearchQuery}) => {
                         </div>
                         <span className="ml-2 text-xl font-semibold">ConnectHub</span>
                     </div>
-
-                    {/* Center - Search */}
-                    {/* <div className="flex-1 max-w-md mx-4">
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <FiSearch className="h-5 w-5 text-indigo-300" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search users..."
-                                className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md bg-indigo-500 text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                    </div> */}
 
                     {/* Right side - Navigation */}
                     <div className="flex items-center space-x-4">
