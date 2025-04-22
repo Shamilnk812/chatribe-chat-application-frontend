@@ -1,14 +1,108 @@
-import React from 'react'
+import React, { useEffect, useId } from 'react'
 import { useState } from 'react';
-import { FiSearch, FiMessageSquare, FiUser } from 'react-icons/fi';
+import { FiSearch, FiMessageSquare, FiUser, FiX } from 'react-icons/fi';
 import { IoMdNotificationsOutline } from 'react-icons/io';
+import axiosInstance from '../Utils/Axios/AxiosInstance';
+import { handleInterestRequest } from '../Utils/Api/InterestRequestApi';
+import { toast } from 'sonner';
+import ChatNotificationToast from './NotificationMessage/ChatNotificationToast';
+import usePendingRequests from '../Utils/Hooks/UsePendingRequest';
+import useUsers from '../Utils/Hooks/UseUsers';
 
 
 
-const Navbar = () => {
+const Navbar = ({fetchAllUsers}) => {
+
+
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [pendingRequests, setPendingRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [pendingRequestCount, setPendingRequestCount] = useState(0);
+    const userId = localStorage.getItem('userId')
+    const access = localStorage.getItem('access_token')
+    // const {
+    //     pendingRequests,
+    //     pendingRequestCount,
+    //     loading,
+    //     setPendingRequests,
+    //     setPendingRequestCount,
+    //     fetchPendingRequests,
+    //   } = usePendingRequests();
     
-    
-    
+    // const {fetchAllUsers} = useUsers()
+
+
+    const fetchPendingRequests = async () => {
+        try {
+            setLoading(true);
+            const response = await axiosInstance.get('chat/get-interest-request/')
+            console.log(' pending requests', response.data)
+            setPendingRequests(response.data);
+            setPendingRequestCount(response.data.length);
+
+        } catch (error) {
+            console.error('failed to fetch pending requests')
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+       
+            fetchPendingRequests();
+      
+    }, [])
+
+
+
+
+    useEffect(() => {
+        const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${userId}/?token=${access}`);
+
+        ws.onopen = () => {
+            console.log('notificatoin WebSocket connected');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('Received message notififccc:', data);
+
+            const { type, content, username, timestamp } = data.message;
+
+            if (type === 'chat_notification') {
+                console.log(' Got new message from', username, ':', content);
+                toast.custom((t) => (
+                   <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
+                  ), {
+                    duration: 3000,
+                    position: 'top-right',
+                  });
+                
+            }else if (type === 'interest_notification'){
+                toast.custom((t)=> (
+                    <ChatNotificationToast  username={username} content={content} timestamp={timestamp}/>
+                ),{
+                    duration:5000,
+                    position: 'top-right'
+                })
+                fetchPendingRequests();
+                fetchAllUsers();
+            }
+
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket disconnected');
+        };
+
+        return () => {
+            ws.close();
+        };
+    }, [userId]);
+
+
+
+
     return (
         <nav className="w-full bg-indigo-600 text-white shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,14 +112,95 @@ const Navbar = () => {
                         <div className="flex-shrink-0">
                             <FiMessageSquare className="h-6 w-6" />
                         </div>
-                        <span className="ml-2 text-xl font-semibold">ConnectHub</span>
+                        <span className="ml-2 text-xl font-semibold">ConnectMe</span>
                     </div>
 
                     {/* Right side - Navigation */}
                     <div className="flex items-center space-x-4">
-                        <button className="p-1 rounded-full text-indigo-200 hover:text-white hover:bg-indigo-500">
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            className="p-1 rounded-full text-indigo-200 hover:text-white hover:bg-indigo-500">
                             <IoMdNotificationsOutline className="h-6 w-6" />
+                            {pendingRequestCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                        {pendingRequestCount}
+                                    </span>
+                                )}
                         </button>
+
+                    </div> 
+
+                        {showNotifications && (
+                            <div className="absolute right-0 top-12 w-80 bg-white text-gray-800 rounded-md shadow-xl z-50">
+                                <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                                    <h3 className="font-semibold">Interest Requests</h3>
+                                    <button onClick={() => setShowNotifications(false)}>
+                                        <FiX className="h-5 w-5" />
+                                    </button>
+                                </div>
+
+                                <div className="max-h-96 overflow-y-auto">
+                                    {loading ? (
+                                        <div className="p-4 text-center">Loading...</div>
+                                    ) : pendingRequests.length === 0 ? (
+                                        <div className="p-4 text-center text-gray-500">No pending requests</div>
+                                    ) : (
+                                        pendingRequests.map(request => (
+                                            <div key={request.id} className="p-4 border-b border-gray-100 hover:bg-gray-50">
+                                                <div className="flex items-center space-x-3">
+                                                    {request.sender.profile_picture ? (
+                                                        <img
+                                                            src={request.sender.profile_picture}
+                                                            alt={request.sender.username}
+                                                            className="w-10 h-10 rounded-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                                            <FiUser className="text-indigo-600" />
+                                                        </div>
+                                                    )}
+                                                    <div className="flex-1">
+                                                        <h4 className="font-medium">{request.sender.username}</h4>
+                                                        <p className="text-xs text-gray-500">Sent {new Date(request.created_at).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex space-x-2 mt-3">
+                                                    <button
+                                                        onClick={async () => {
+                                                            await handleInterestRequest(request.id, 'accepted', fetchAllUsers);
+                                                            // setPendingRequests(prev => prev.filter(r => r.id !== request.id));
+                                                            setPendingRequests(prev => {
+                                                                const updatedRequests = prev.filter(r => r.id !== request.id);
+                                                                setPendingRequestCount(updatedRequests.length); 
+                                                                return updatedRequests;
+                                                            });
+                                                        }}
+                                                        className="flex-1 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+                                                    >
+                                                        Accept
+                                                    </button>
+                                                    <button
+                                                        onClick={async () => {
+                                                            await handleInterestRequest(request.id, 'rejected', fetchAllUsers);
+                                                            setPendingRequests(prev => {
+                                                                const updatedRequests = prev.filter(r => r.id !== request.id);
+                                                                setPendingRequestCount(updatedRequests.length); 
+                                                                return updatedRequests;
+                                                            });
+                                                        }}
+                                                        className="flex-1 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="ml-3 relative">
                             <div className="w-8 h-8 rounded-full bg-indigo-400 flex items-center justify-center">
                                 <FiUser className="w-4 h-4" />

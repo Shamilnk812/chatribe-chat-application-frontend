@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react';
+import React from 'react'
+import { useState, useEffect } from 'react';
 import { FaUserCog } from "react-icons/fa";
 import { IoChatbubblesSharp } from "react-icons/io5";
 import { FiSearch, FiMessageSquare, FiUser, FiLogOut, FiSend, FiHome } from 'react-icons/fi';
@@ -20,7 +20,32 @@ import ChatLayout from '../Components/ChatLayout';
 
 const Home = () => {
 
+
+  const userId = localStorage.getItem('userId')
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 500);
+  const [users, setUsers] = useState([])
+  const [activeTab, setActiveTab] = useState('home')
+
+
   const navigate = useNavigate();
+
+
+  const fetchAllUsers = async () => {
+    try {
+      const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
+      console.log('users ', response.data)
+      setUsers(response.data)
+    } catch (error) {
+      console.error('sometheing', error)
+    }
+  }
+
+  useEffect(() => {
+    if (userId) {
+      fetchAllUsers()
+    }
+  }, [debouncedSearch, userId])
 
 
 
@@ -30,7 +55,7 @@ const Home = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Full-width Navbar */}
-      <Navbar />
+      <Navbar fetchAllUsers={fetchAllUsers} />
 
       {/* Main Content - Container */}
       <div className="flex-1 overflow-hidden">
@@ -38,11 +63,25 @@ const Home = () => {
           <div className="h-full bg-white rounded-xl shadow-sm overflow-hidden flex">
 
 
-            <Sidebar />
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
 
             {/* Content Area */}
-            <UserProfileCard />
+
+            {activeTab === 'home' && (
+              <UserProfileCard
+                users={users}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                fetchAllUsers={fetchAllUsers}
+                userId={userId}
+                setActiveTab={setActiveTab}
+              />
+            )}
+
+            {activeTab === 'chat' && (
+              <ChatLayout />
+            )}
 
 
 

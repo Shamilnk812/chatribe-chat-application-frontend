@@ -5,37 +5,37 @@ import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import useDebounce from '../Utils/Hooks/UseDebounce'
 import { FiSearch } from 'react-icons/fi';
-import { SiAwwwards } from 'react-icons/si'
 import { toast } from 'sonner'
+import { handleInterestRequest, handleSendInterest } from '../Utils/Api/InterestRequestApi'
 
 
 
 
-const UserProfileCard = () => {
+const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, userId, setActiveTab}) => {
 
-    const userId = localStorage.getItem('userId')
-    const [searchQuery, setSearchQuery] = useState('');
-    const debouncedSearch = useDebounce(searchQuery, 500);
-    const [users, setUsers] = useState([])
+    // const userId = localStorage.getItem('userId')
+    // const [searchQuery, setSearchQuery] = useState('');
+    // const debouncedSearch = useDebounce(searchQuery, 500);
+    // const [users, setUsers] = useState([])
 
 
     const navigate = useNavigate()
 
-    const fetchAllUsers = async () => {
-        try {
-            const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
-            console.log('users ', response.data)
-            setUsers(response.data)
-        } catch (error) {
-            console.error('sometheing', error)
-        }
-    }
+    // const fetchAllUsers = async () => {
+    //     try {
+    //         const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
+    //         console.log('users ', response.data)
+    //         setUsers(response.data)
+    //     } catch (error) {
+    //         console.error('sometheing', error)
+    //     }
+    // }
 
-    useEffect(() => {
-        if (userId) {
-            fetchAllUsers()
-        }
-    }, [debouncedSearch, userId])
+    // useEffect(() => {
+    //     if (userId) {
+    //         fetchAllUsers()
+    //     }
+    // }, [debouncedSearch, userId])
 
 
 
@@ -48,46 +48,14 @@ const UserProfileCard = () => {
                 user_id2: recipientId,
             })
             console.log(response.data)
-            navigate('/chat')
+            setActiveTab('chat')
+            // navigate('/chat')
 
         } catch (error) {
             console.error(' failed to create chat room', error)
         }
     }
 
-
-    const handleSendInterest = async (receiverId) => {
-        try {
-            const response = await axiosInstance.post('chat/send-interest-request/', {
-                receiver_id: receiverId
-            });
-            console.log('Interest sent:', response.data);
-            fetchAllUsers(); 
-        } catch (error) {
-            console.error('Error sending interest request:', error);
-        }
-    }
-
-
-
-    const handleInterestRequest = async (interestId, action)=> {
-        console.log('inter',interestId, 'action ',action)
-
-        try{
-            const response = await axiosInstance.post('chat/handle-interest-request/', {
-                interest_id: interestId,
-                action: action
-            })
-            console.log(response.data);
-            fetchAllUsers()
-            toast.success('Interest request updated successfully');
-
-           
-        }catch(error){
-            console.error('Failed to update Interest request', error);
-            toast.error('Failed to update Interest request');
-        }
-    }
 
 
 
@@ -145,7 +113,7 @@ const UserProfileCard = () => {
                                 {user.interest_status === null && (
                                     <button
                                         className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                                        onClick={() => handleSendInterest(user.id)} // create this function
+                                        onClick={() => handleSendInterest(user.id, fetchAllUsers)} // create this function
                                     >
                                         Send Interest
                                     </button>
@@ -167,13 +135,13 @@ const UserProfileCard = () => {
                                         ) : (
                                             <>
                                             <button
-                                                onClick={() => handleInterestRequest(user.interest_status.id , 'accepted')} // duseefine this function
+                                                onClick={() => handleInterestRequest(user.interest_status.id , 'accepted', fetchAllUsers)} // duseefine this function
                                                 className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
                                             >
                                                 Accept Request
                                             </button>
                                             <button
-                                                onClick={() => handleInterestRequest(user.interest_status.id , 'rejected')} // duseefine this function
+                                                onClick={() => handleInterestRequest(user.interest_status.id , 'rejected', fetchAllUsers)} // duseefine this function
                                                 className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
                                             >
                                                 Reject Request
@@ -203,14 +171,15 @@ const UserProfileCard = () => {
                                         {user.interest_status.sent_by_me ? (
                                             <button
                                                 className="px-3 py-1 text-sm bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
-                                                onClick={() => handleSendInterest(user.id)}
+                                                onClick={() => handleSendInterest(user.id, fetchAllUsers)}
                                             >
                                                 Send Interest Again
                                             </button>
                                         ) : (
                                             <button
                                                 className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
-                                            onClick={() => handleInterestRequest(user.interest_status.id , 'accepted')} 
+                                            onClick={() => handleInterestRequest(user.interest_status.id , 'accepted', fetchAllUsers)} 
+                                            
                                             >
                                                 Accept Now
                                             </button>

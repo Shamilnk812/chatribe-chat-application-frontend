@@ -6,9 +6,6 @@ const ChatMessage = ({ text, sender, userId, timestamp, seen }) => {
     const isSender = senderId === Number(userId);
 
 
-    console.log('seddddd',sender)
-    console.log('messgwe sender',isSender)
-
     return (
         <div
             className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}
@@ -21,11 +18,7 @@ const ChatMessage = ({ text, sender, userId, timestamp, seen }) => {
                 {new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
 
                 </p>
-                {isSender && (
-                        <span className={`ml-2 text-xs ${seen ? 'text-white' : 'text-gray-600'}`}>
-                            {seen ? '✓✓' : '✓'}
-                        </span>
-                    )}
+                
             </div>
         </div>
     )
