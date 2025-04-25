@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-800 text-white">
     {/* Navigation */}
     <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
       <div className="text-2xl font-bold">ConnectMe</div>
@@ -30,12 +30,12 @@ const LandingPage = () => {
           >
             Get Started
           </Link>
-          <Link 
+          {/* <Link 
             to="/login" 
             className="px-8 py-4 bg-white bg-opacity-10 rounded-lg font-bold text-lg hover:bg-opacity-20 transition text-center"
           >
             Learn More
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="md:w-1/2 relative">
@@ -75,6 +75,7 @@ const LandingPage = () => {
                 <div className="flex items-center bg-gray-800 rounded-lg px-4 py-2">
                   <input 
                     type="text" 
+                    disabled
                     placeholder="Type a message..." 
                     className="bg-transparent flex-1 outline-none text-white"
                   />
@@ -88,8 +89,6 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-        <div className="absolute -top-10 -left-10 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-20 -right-10 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
       </div>
     </div>
 
@@ -130,7 +129,7 @@ const LandingPage = () => {
     {/* Footer */}
     <footer className="border-t border-white border-opacity-10 py-8">
       <div className="container mx-auto px-6 text-center text-gray-400">
-        <p>© 2023 ConnectMe. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} ConnectMe. All rights reserved.</p>
       </div>
     </footer>
   </div>

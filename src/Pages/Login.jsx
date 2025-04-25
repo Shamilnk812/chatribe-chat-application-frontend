@@ -1,42 +1,52 @@
 
 import { useFormik } from 'formik';
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import LoginSchema from '../Validations/LoginSchema';
 import axiosInstance from '../Utils/Axios/AxiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import PasswordVisibility from '../Components/PasswordVisibility';
+import ButtonProcessingCircle from '../Components/ButtonProcessingCircle';
 
 
 
 const Login = () => {
-   
-    const navigate = useNavigate()
+
+    const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const [processing, setProcessing] = useState(false);
+
+
     const formik = useFormik({
         initialValues: {
             email: '',
             password: '',
         },
-        validationSchema:LoginSchema,
-        onSubmit: async (values)=> {
-            try{
-                const response = await axiosInstance.post('/user/login/',values)
+        validationSchema: LoginSchema,
+        onSubmit: async (values) => {
+
+            setProcessing(true);
+            try {
+                const response = await axiosInstance.post('/user/login/', values)
                 console.log(response.data)
-                const {access_token, refresh_token, user_id } =  response.data
+                const { access_token, refresh_token, user_id } = response.data
                 localStorage.setItem('access_token', access_token);
                 localStorage.setItem('refresh_token', refresh_token);
-                localStorage.setItem('userId', user_id );
+                localStorage.setItem('userId', user_id);
                 toast.success('you are successfully logged in')
                 navigate('/home')
-                
-            }catch (error){
-                console.error('failed to account login',error)
+
+            } catch (error) {
+                console.error('failed to account login', error)
                 const errorMessage = error.response?.data?.detail || 'Login failed. Please try again.';
                 toast.error(errorMessage)
+            } finally {
+                setProcessing(false);
             }
         }
     })
-   
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-800 flex items-center justify-center p-4">
@@ -63,33 +73,37 @@ const Login = () => {
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
                                     className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-white placeholder-gray-400"
-                                    placeholder="you@example.com"
                                 />
-                                 {formik.touched.email && formik.errors.email && (
+                                {formik.touched.email && formik.errors.email && (
                                     <div className="text-red-500 text-sm ml-2 mt-1">{formik.errors.email}</div>
                                 )}
                             </div>
-                            <div className="mb-6">
+                            <div className="mb-6 relative">
                                 <label htmlFor="password" className="block text-gray-300 text-sm font-medium mb-2">Password</label>
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     id="password"
                                     name="password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-white placeholder-gray-400"
-                                    placeholder="••••••••"
                                 />
-                                 {formik.touched.password && formik.errors.password && (
+                                <PasswordVisibility showPassword={showPassword} setShowPassword={setShowPassword} />
+                                {formik.touched.password && formik.errors.password && (
                                     <div className="text-red-500 text-sm ml-2 mt-1">{formik.errors.password}</div>
                                 )}
                             </div>
-                            
+
                             <button
                                 type="submit"
-                                className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
+                                disabled={processing}
+                                className={`w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ${processing ? 'opacity-70 cursor-not-allowed' : ''} `}
                             >
-                                Sign In
+                                {processing ? (
+                                    <ButtonProcessingCircle />
+                                ) : (
+                                    'Sign In'
+                                )}
                             </button>
                         </form>
 
@@ -102,7 +116,7 @@ const Login = () => {
                             </p>
                         </div>
 
-                       
+
                     </div>
                 </div>
             </div>

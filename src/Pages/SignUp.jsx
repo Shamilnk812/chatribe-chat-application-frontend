@@ -1,16 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import axiosInstance from '../Utils/Axios/AxiosInstance';
 import { toast } from 'sonner';
 import registrationSchema from '../Validations/SignupSchema';
+import PasswordVisibility from '../Components/PasswordVisibility';
+import ButtonProcessingCircle from '../Components/ButtonProcessingCircle';
+
 
 
 
 const SignUp = () => {
 
     const navigate = useNavigate()
+    const [showPassword1, setShowPassword1] = useState(false)
+    const [showPassword2, setShowPassword2] = useState(false)
+    const [processing, setProcessing] = useState(false);
+    
    
     const formik = useFormik({
         initialValues:{
@@ -21,6 +28,7 @@ const SignUp = () => {
         },
         validationSchema: registrationSchema,
         onSubmit: async (values) => {
+            setProcessing(true);
             try {
                 const  response = await axiosInstance.post('/user/register/',values)
                 const {access_token, refresh_token, user_id} = response.data
@@ -47,6 +55,8 @@ const SignUp = () => {
                 } else {
                     toast.error('Registration failed. Please try again later.');
                 }
+            }finally{
+                setProcessing(false);
             }
         }
     })
@@ -66,7 +76,7 @@ const SignUp = () => {
                             </div>
                         </div>
                         <h2 className="text-3xl font-bold text-center text-white mb-2">Create Account</h2>
-                        <p className="text-center text-gray-300 mb-8">Join our community today</p>
+                        <p className="text-center text-gray-300 mb-8">A smarter way to stay connected</p>
 
                         <form onSubmit={formik.handleSubmit}>
                             <div className="mb-4">
@@ -78,7 +88,6 @@ const SignUp = () => {
                                     value={formik.values.username}
                                     onChange={formik.handleChange}
                                     className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400"
-                                    placeholder="John Doe"
                                 />
                                  {formik.touched.username && formik.errors.username && (
                                     <div className="text-red-500 text-sm ml-2 mt-1">{formik.errors.username}</div>
@@ -93,50 +102,52 @@ const SignUp = () => {
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
                                     className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400"
-                                    placeholder="you@example.com"
                                   
                                 />
                                  {formik.touched.email && formik.errors.email && (
                                     <div className="text-red-500 text-sm ml-2 mt-1">{formik.errors.email}</div>
                                 )}
                             </div>
-                            <div className="mb-4">
+                            <div className="mb-4 relative">
                                 <label htmlFor="password" className="block text-gray-300 text-sm font-medium mb-2">Password</label>
                                 <input
-                                    type="password"
+                                    type={showPassword2 ? "text" : "password"}
                                     id="password"
                                     name="password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400"
-                                    placeholder="••••••••"
-                                   
                                 />
+                                <PasswordVisibility showPassword={showPassword2} setShowPassword={setShowPassword2}/>
                                  {formik.touched.password && formik.errors.password && (
                                     <div className="text-red-500 text-sm ml-2 mt-1">{formik.errors.password}</div>
                                 )}
                             </div>
-                            <div className="mb-6">
+                            <div className="mb-6 relative">
                                 <label htmlFor="confirm_password" className="block text-gray-300 text-sm font-medium mb-2">Confirm Password</label>
                                 <input
-                                    type="password"
+                                    type={showPassword1 ? 'text': 'password'}
                                     id="confirm_password"
                                     name="confirm_password"
                                     value={formik.values.confirm_password}
                                     onChange={formik.handleChange}
                                     className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400"
-                                    placeholder="••••••••"
-                                   
                                 />
+                                <PasswordVisibility showPassword={showPassword1} setShowPassword={setShowPassword1}/>
                                  {formik.touched.confirm_password && formik.errors.confirm_password && (
                                     <div className="text-red-500 text-sm ml-2 mt-1">{formik.errors.confirm_password}</div>
                                 )}
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
+                                disabled={processing}
+                                className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ${processing ? 'opacity-70 cursor-not-allowed' : ''}`}
                             >
-                                Sign Up
+                                {processing ? (
+                                    <ButtonProcessingCircle />
+                                ) : (
+                                    'Sign Up'
+                                )}
                             </button>
                         </form>
 

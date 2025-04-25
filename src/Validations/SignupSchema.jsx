@@ -42,7 +42,8 @@ const registrationSchema = Yup.object({
         .matches(/[0-9]/, "Password requires a number")
         .matches(/[a-z]/, "Password requires a lowercase letter")
         .matches(/[A-Z]/, "Password requires an uppercase letter")
-        .matches(/[^\w]/, "Password requires a symbol"),
+        .matches(/[@#$]/, "Password must contain at least one of special characters")
+        .matches(/^[A-Za-z0-9@#$]+$/, "Only @, #, and $ are allowed as special characters"),
     confirm_password: Yup.string()
         .transform((value) => value.trim())
         .oneOf([Yup.ref("password")], "The Password confirmation doesn't match.")
