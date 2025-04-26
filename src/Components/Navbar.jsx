@@ -8,35 +8,25 @@ import { toast } from 'sonner';
 import ChatNotificationToast from './NotificationMessage/ChatNotificationToast';
 import usePendingRequests from '../Utils/Hooks/UsePendingRequest';
 import useUsers from '../Utils/Hooks/UseUsers';
+import { useAppStateContext } from '../Utils/Context/AppStateContext';
+import { updateUserInterestRequestStatus } from '../Utils/Api/InterestRequestApi';
 
 
 
-const Navbar = ({fetchAllUsers}) => {
+const Navbar = () => {
 
 
     const [showNotifications, setShowNotifications] = useState(false);
-    const [pendingRequests, setPendingRequests] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [pendingRequestCount, setPendingRequestCount] = useState(0);
     const userId = localStorage.getItem('userId')
     const access = localStorage.getItem('access_token')
-    // const {
-    //     pendingRequests,
-    //     pendingRequestCount,
-    //     loading,
-    //     setPendingRequests,
-    //     setPendingRequestCount,
-    //     fetchPendingRequests,
-    //   } = usePendingRequests();
     
-    // const {fetchAllUsers} = useUsers()
-
+    const {users, setUsers, pendingRequests, setPendingRequests, pendingRequestCount, setPendingRequestCount} = useAppStateContext();
 
     const fetchPendingRequests = async () => {
         try {
             setLoading(true);
             const response = await axiosInstance.get('chat/get-interest-request/')
-            console.log(' pending requests', response.data)
             setPendingRequests(response.data);
             setPendingRequestCount(response.data.length);
 
@@ -48,15 +38,17 @@ const Navbar = ({fetchAllUsers}) => {
     }
 
     useEffect(() => {
-       
-            fetchPendingRequests();
-      
+
+        fetchPendingRequests();
+
     }, [])
 
 
 
 
     useEffect(() => {
+        if (!userId || users.length === 0) return;
+
         const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${userId}/?token=${access}`);
 
         ws.onopen = () => {
@@ -64,29 +56,75 @@ const Navbar = ({fetchAllUsers}) => {
         };
 
         ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log('Received message notififccc:', data);
 
-            const { type, content, username, timestamp } = data.message;
+            const data = JSON.parse(event.data);
+            console.log('Received message ', data);
+
+            const { type, content, username, timestamp, updated_data } = data.message;
 
             if (type === 'chat_notification') {
                 console.log(' Got new message from', username, ':', content);
                 toast.custom((t) => (
-                   <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
-                  ), {
+                    <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
+                ), {
                     duration: 3000,
                     position: 'top-right',
-                  });
-                
-            }else if (type === 'interest_notification'){
-                toast.custom((t)=> (
-                    <ChatNotificationToast  username={username} content={content} timestamp={timestamp}/>
-                ),{
-                    duration:5000,
+                });
+
+            } else if (type === 'interest_notification') {
+                toast.custom((t) => (
+                    <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
+                ), {
+                    duration: 5000,
                     position: 'top-right'
                 })
-                fetchPendingRequests();
-                fetchAllUsers();
+                
+                if (updated_data){
+                    console.log('updar respo data', updated_data)
+                    let userToUpdate = null;
+
+                    if(updated_data.status === 'pending'){
+                        userToUpdate = updated_data.sender;
+                    }else{
+                        userToUpdate  = updated_data.receiver;
+                    }
+        
+                const sentByMe = (parseInt(userId) === updated_data.sender.id); 
+                
+                const updatedUsers = updateUserInterestRequestStatus(
+                    users,
+                    userToUpdate,
+                    {
+                        id: updated_data.id,
+                        status: updated_data.status,
+                        sent_by_me: sentByMe
+
+                    }
+                )
+                console.log('updated dddddddd , user',updatedUsers)
+                setUsers(updatedUsers)
+
+
+                if (updated_data.status === 'pending') {
+                    setPendingRequests((prev) => {
+                        const isAlreadyExists = prev.some((request) => request.id === updated_data.id);
+                        if (!isAlreadyExists) {
+                            const updatedList = [...prev, updated_data];
+                            setPendingRequestCount(updatedList.length);
+                            return updatedList;
+                        }
+                        return prev;
+                    });
+                } else {
+                    setPendingRequests((prev) => {
+                        const updatedRequests = prev.filter(request => request.id !== updated_data.id);
+                        setPendingRequestCount(updatedRequests.length);
+                        return updatedRequests;
+                    });
+                }
+            }
+
+               
             }
 
         };
@@ -98,7 +136,7 @@ const Navbar = ({fetchAllUsers}) => {
         return () => {
             ws.close();
         };
-    }, [userId]);
+    }, [userId,users]);
 
 
 
@@ -109,27 +147,28 @@ const Navbar = ({fetchAllUsers}) => {
                 <div className="flex items-center justify-between h-16">
                     {/* Left side - Logo/Brand */}
                     <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <FiMessageSquare className="h-6 w-6" />
-                        </div>
-                        <span className="ml-2 text-xl font-semibold">ConnectMe</span>
+                        <img
+                            src="/chatribe-logo-2.png"
+                            alt="Chatribe Logo"
+                            className="h-14 w-24 object-contain"
+                        />
                     </div>
 
                     {/* Right side - Navigation */}
                     <div className="flex items-center space-x-4">
-                    <div className="relative">
-                        <button
-                            onClick={() => setShowNotifications(!showNotifications)}
-                            className="p-1 rounded-full text-indigo-200 hover:text-white hover:bg-indigo-500">
-                            <IoMdNotificationsOutline className="h-6 w-6" />
-                            {pendingRequestCount > 0 && (
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowNotifications(!showNotifications)}
+                                className="p-1 rounded-full text-indigo-200 hover:text-white hover:bg-indigo-500">
+                                <IoMdNotificationsOutline className="h-6 w-6" />
+                                {pendingRequestCount > 0 && (
                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                         {pendingRequestCount}
                                     </span>
                                 )}
-                        </button>
+                            </button>
 
-                    </div> 
+                        </div>
 
                         {showNotifications && (
                             <div className="absolute right-0 top-12 w-80 bg-white text-gray-800 rounded-md shadow-xl z-50">
@@ -168,13 +207,8 @@ const Navbar = ({fetchAllUsers}) => {
                                                 <div className="flex space-x-2 mt-3">
                                                     <button
                                                         onClick={async () => {
-                                                            await handleInterestRequest(request.id, 'accepted', fetchAllUsers);
-                                                            // setPendingRequests(prev => prev.filter(r => r.id !== request.id));
-                                                            setPendingRequests(prev => {
-                                                                const updatedRequests = prev.filter(r => r.id !== request.id);
-                                                                setPendingRequestCount(updatedRequests.length); 
-                                                                return updatedRequests;
-                                                            });
+                                                            await handleInterestRequest(request.id, 'accepted', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId);
+
                                                         }}
                                                         className="flex-1 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
                                                     >
@@ -182,12 +216,7 @@ const Navbar = ({fetchAllUsers}) => {
                                                     </button>
                                                     <button
                                                         onClick={async () => {
-                                                            await handleInterestRequest(request.id, 'rejected', fetchAllUsers);
-                                                            setPendingRequests(prev => {
-                                                                const updatedRequests = prev.filter(r => r.id !== request.id);
-                                                                setPendingRequestCount(updatedRequests.length); 
-                                                                return updatedRequests;
-                                                            });
+                                                            await handleInterestRequest(request.id, 'rejected', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId);
                                                         }}
                                                         className="flex-1 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
                                                     >

@@ -7,11 +7,12 @@ import useDebounce from '../Utils/Hooks/UseDebounce'
 import { FiSearch } from 'react-icons/fi';
 import { toast } from 'sonner'
 import { handleInterestRequest, handleSendInterest } from '../Utils/Api/InterestRequestApi'
+import { useAppStateContext } from '../Utils/Context/AppStateContext'
 
 
 
 
-const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, userId, setActiveTab}) => {
+const UserProfileCard = ({users, setUsers, searchQuery, setSearchQuery, fetchAllUsers, userId, setActiveTab}) => {
 
     // const userId = localStorage.getItem('userId')
     // const [searchQuery, setSearchQuery] = useState('');
@@ -20,25 +21,9 @@ const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, use
 
 
     const navigate = useNavigate()
-
-    // const fetchAllUsers = async () => {
-    //     try {
-    //         const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
-    //         console.log('users ', response.data)
-    //         setUsers(response.data)
-    //     } catch (error) {
-    //         console.error('sometheing', error)
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if (userId) {
-    //         fetchAllUsers()
-    //     }
-    // }, [debouncedSearch, userId])
-
-
-
+    
+    const {pendingRequests, setPendingRequests, pendingRequestCount, setPendingRequestCount} = useAppStateContext();
+   
     const handleChat = async (recipientId) => {
 
         try {
@@ -49,7 +34,6 @@ const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, use
             })
             console.log(response.data)
             setActiveTab('chat')
-            // navigate('/chat')
 
         } catch (error) {
             console.error(' failed to create chat room', error)
@@ -113,7 +97,8 @@ const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, use
                                 {user.interest_status === null && (
                                     <button
                                         className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                                        onClick={() => handleSendInterest(user.id, fetchAllUsers)} // create this function
+                                        onClick={() => handleSendInterest(user.id, users, setUsers, userId)} 
+                                        // onClick={() => handleSendInterest(user.id, fetchAllUsers)} 
                                     >
                                         Send Interest
                                     </button>
@@ -135,13 +120,13 @@ const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, use
                                         ) : (
                                             <>
                                             <button
-                                                onClick={() => handleInterestRequest(user.interest_status.id , 'accepted', fetchAllUsers)} // duseefine this function
+                                                onClick={() => handleInterestRequest(user.interest_status.id , 'accepted', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)} 
                                                 className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
                                             >
                                                 Accept Request
                                             </button>
                                             <button
-                                                onClick={() => handleInterestRequest(user.interest_status.id , 'rejected', fetchAllUsers)} // duseefine this function
+                                                onClick={() => handleInterestRequest(user.interest_status.id , 'rejected', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount,userId)} 
                                                 className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
                                             >
                                                 Reject Request
@@ -171,14 +156,14 @@ const UserProfileCard = ({users, searchQuery, setSearchQuery, fetchAllUsers, use
                                         {user.interest_status.sent_by_me ? (
                                             <button
                                                 className="px-3 py-1 text-sm bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
-                                                onClick={() => handleSendInterest(user.id, fetchAllUsers)}
+                                                onClick={() => handleSendInterest(user.id, users, setUsers, userId)}
                                             >
                                                 Send Interest Again
                                             </button>
                                         ) : (
                                             <button
                                                 className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
-                                            onClick={() => handleInterestRequest(user.interest_status.id , 'accepted', fetchAllUsers)} 
+                                            onClick={() => handleInterestRequest(user.interest_status.id , 'accepted', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)} 
                                             
                                             >
                                                 Accept Now

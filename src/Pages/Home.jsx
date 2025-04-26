@@ -14,17 +14,19 @@ import Sidebar from '../Components/Sidebar';
 import useDebounce from '../Utils/Hooks/UseDebounce';
 import UserProfileCard from '../Components/UserProfileCard';
 import ChatLayout from '../Components/ChatLayout';
+import { useAppStateContext } from '../Utils/Context/AppStateContext';
 
 
 
 
 const Home = () => {
-
-
+ 
+  
+  const {users, setUsers} = useAppStateContext();
   const userId = localStorage.getItem('userId')
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 500);
-  const [users, setUsers] = useState([])
+  // const [users, setUsers] = useState([])
   const [activeTab, setActiveTab] = useState('home')
 
 
@@ -34,7 +36,8 @@ const Home = () => {
   const fetchAllUsers = async () => {
     try {
       const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
-      console.log('users ', response.data)
+      console.log('users fetchiiiin ', response.data)
+
       setUsers(response.data)
     } catch (error) {
       console.error('sometheing', error)
@@ -55,7 +58,7 @@ const Home = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Full-width Navbar */}
-      <Navbar fetchAllUsers={fetchAllUsers} />
+      <Navbar  />
 
       {/* Main Content - Container */}
       <div className="flex-1 overflow-hidden">
@@ -71,6 +74,7 @@ const Home = () => {
             {activeTab === 'home' && (
               <UserProfileCard
                 users={users}
+                setUsers={setUsers}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 fetchAllUsers={fetchAllUsers}
