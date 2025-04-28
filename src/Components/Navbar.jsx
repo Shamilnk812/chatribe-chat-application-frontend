@@ -6,8 +6,6 @@ import axiosInstance from '../Utils/Axios/AxiosInstance';
 import { handleInterestRequest } from '../Utils/Api/InterestRequestApi';
 import { toast } from 'sonner';
 import ChatNotificationToast from './NotificationMessage/ChatNotificationToast';
-import usePendingRequests from '../Utils/Hooks/UsePendingRequest';
-import useUsers from '../Utils/Hooks/UseUsers';
 import { useAppStateContext } from '../Utils/Context/AppStateContext';
 import { updateUserInterestRequestStatus } from '../Utils/Api/InterestRequestApi';
 
