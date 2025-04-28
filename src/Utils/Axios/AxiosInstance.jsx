@@ -1,7 +1,8 @@
 import axios from "axios";
 import { toast } from "sonner";
 
-export const API_URL = 'http://localhost:8000/api';
+export const API_URL = 'https://chatribe-chat-application-backend.onrender.com/api';
+// export const API_URL = 'http://localhost:8000/api';
 
 
 const axiosInstance = axios.create({
