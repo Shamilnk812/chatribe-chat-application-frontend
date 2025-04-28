@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import ChatNotificationToast from './NotificationMessage/ChatNotificationToast';
 import { useAppStateContext } from '../Utils/Context/AppStateContext';
 import { updateUserInterestRequestStatus } from '../Utils/Api/InterestRequestApi';
+import { WS_URL } from '../Utils/Axios/AxiosInstance';
 
 
 
@@ -47,7 +48,7 @@ const Navbar = () => {
     useEffect(() => {
         if (!userId || users.length === 0) return;
 
-        const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${userId}/?token=${access}`);
+        const ws = new WebSocket(`${WS_URL}/notifications/${userId}/?token=${access}`);
 
         ws.onopen = () => {
             console.log('notificatoin WebSocket connected');

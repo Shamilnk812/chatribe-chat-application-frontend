@@ -8,6 +8,7 @@ import ChatMessage from './ChatMessage';
 import ChatArea from './ChatArea';
 import ChatInput from './ChatInput';
 import EmptyChatAreaContent from './EmptyChatAreaContent';
+import { WS_URL } from '../Utils/Axios/AxiosInstance';
 
 const ChatLayout = () => {
 
@@ -78,7 +79,7 @@ const ChatLayout = () => {
     }
 
     console.log("chat with user id is :", chatWithUserId)
-    const socketUrl = `ws://localhost:8000/ws/chat/${chatWithUserId}/?token=${access}`;
+    const socketUrl = `${WS_URL}/chat/${chatWithUserId}/?token=${access}`;
     const newWs = new WebSocket(socketUrl);
 
     newWs.onopen = () => {

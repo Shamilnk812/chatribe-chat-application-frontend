@@ -4,6 +4,9 @@ import { toast } from "sonner";
 export const API_URL = 'https://chatribe-chat-application-backend.onrender.com/api';
 // export const API_URL = 'http://localhost:8000/api';
 
+export const WS_URL = 'wss://chatribe-chat-application-backend.onrender.com/ws';
+// export const WS_URL = 'ws://localhost:8000/ws';
+
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

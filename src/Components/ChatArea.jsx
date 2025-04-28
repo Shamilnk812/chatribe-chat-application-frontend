@@ -1,9 +1,19 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import ChatMessage from './ChatMessage'
 import { FaUserCircle } from 'react-icons/fa';
 
 
 const ChatArea = ({selectedUser, messages, userId}) => {
+
+
+    const chatArea = useRef(null)
+    
+    useEffect(() => {
+        if (chatArea.current) {
+            chatArea.current.scrollTop = chatArea.current.scrollHeight;
+        }
+    }, [messages]);
+    
     return (
         <>
 
@@ -34,7 +44,7 @@ const ChatArea = ({selectedUser, messages, userId}) => {
 
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
 
-                <div className="space-y-4">
+                <div ref={chatArea} className="space-y-4">
                     {Array.isArray(messages) && messages
                         .slice()
                         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
