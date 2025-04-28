@@ -32,8 +32,8 @@ const UserProfileCard = ({users, setUsers, searchQuery, setSearchQuery, fetchAll
                 user_id1: userId,
                 user_id2: recipientId,
             })
-            console.log(response.data)
-            setActiveTab('chat')
+            // setActiveTab('chat')
+            navigate('/chat')
 
         } catch (error) {
             console.error(' failed to create chat room', error)

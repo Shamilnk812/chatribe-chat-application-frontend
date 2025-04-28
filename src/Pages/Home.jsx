@@ -22,12 +22,12 @@ import { useAppStateContext } from '../Utils/Context/AppStateContext';
 const Home = () => {
  
   
-  const {users, setUsers} = useAppStateContext();
+  const {users, setUsers, activeTab, setActiveTab} = useAppStateContext();
   const userId = localStorage.getItem('userId')
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 500);
   // const [users, setUsers] = useState([])
-  const [activeTab, setActiveTab] = useState('home')
+  // const [activeTab, setActiveTab] = useState('home')
 
 
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Home = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Full-width Navbar */}
-      <Navbar  />
+      <Navbar />
 
       {/* Main Content - Container */}
       <div className="flex-1 overflow-hidden">
@@ -66,12 +66,12 @@ const Home = () => {
           <div className="h-full bg-white rounded-xl shadow-sm overflow-hidden flex">
 
 
-            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Sidebar />
 
 
             {/* Content Area */}
 
-            {activeTab === 'home' && (
+           
               <UserProfileCard
                 users={users}
                 setUsers={setUsers}
@@ -81,13 +81,7 @@ const Home = () => {
                 userId={userId}
                 setActiveTab={setActiveTab}
               />
-            )}
-
-            {activeTab === 'chat' && (
-              <ChatLayout />
-            )}
-
-
+          
 
           </div>
         </div>

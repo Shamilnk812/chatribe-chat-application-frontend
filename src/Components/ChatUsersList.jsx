@@ -12,7 +12,6 @@ const ChatUsersList = ({ userId, openChat }) => {
   const fetchChatUsersList = async () => {
     try {
       const response = await axiosInstance.get(`chat/get-chat-users/${userId}`)
-      console.log('chat user list', response.data)
       setChatUsersList(response.data)
     } catch (error) {
       console.error('failded ot fetch chat user list', error)

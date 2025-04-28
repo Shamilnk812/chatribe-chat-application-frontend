@@ -90,7 +90,7 @@ const ChatLayout = () => {
 
     newWs.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('Received message:', data);
+      // console.log('Received message:', data);
       setMessages((prevMessages) => [...prevMessages, data]);
     };
 

@@ -42,9 +42,9 @@ const ChatArea = ({selectedUser, messages, userId}) => {
 
 
 
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+            <div ref={chatArea}  className="flex-1 overflow-y-auto p-4 bg-gray-50">
 
-                <div ref={chatArea} className="space-y-4">
+                <div className="space-y-4">
                     {Array.isArray(messages) && messages
                         .slice()
                         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))

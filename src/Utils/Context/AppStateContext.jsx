@@ -9,9 +9,12 @@ export const AppStateContextProvider = ({children}) => {
     const [users, setUsers] = useState([]);
     const [pendingRequests, setPendingRequests] = useState([]);
     const [pendingRequestCount, setPendingRequestCount] = useState(0);
+    const [activeTab, setActiveTab] = useState('home')
+    
+
 
     return(
-        <AppStateContext.Provider value={{ users, setUsers, pendingRequests, setPendingRequests, pendingRequestCount, setPendingRequestCount }}>
+        <AppStateContext.Provider value={{ users, setUsers, pendingRequests, setPendingRequests, pendingRequestCount, setPendingRequestCount, activeTab, setActiveTab }}>
          {children}
         </AppStateContext.Provider>
     )

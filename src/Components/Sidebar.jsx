@@ -9,9 +9,10 @@ import { Link, useLocation } from 'react-router-dom';
 
 
 
-const Sidebar = ({activeTab,setActiveTab}) => {
+const Sidebar = () => {
 
     const navigate = useNavigate()
+    const location = useLocation(); 
    
     const handleLogout = async () => {
         try {
@@ -39,6 +40,28 @@ const Sidebar = ({activeTab,setActiveTab}) => {
         <>
             {/* Sidebar */}
             <div className="w-20 bg-gray-50 border-r border-gray-200 flex flex-col items-center py-6">
+            <Link
+                to="/home"
+                className={`p-3 rounded-xl mb-4 ${location.pathname === '/home' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+                <RiUserSearchLine className="w-6 h-6" />
+            </Link>
+
+            <Link
+                to="/chat"
+                className={`p-3 rounded-xl mb-4 ${location.pathname === '/chat' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+                <FiMessageSquare className="w-6 h-6" />
+            </Link>
+
+            <button
+                onClick={handleLogout}
+                className="p-3 rounded-xl text-gray-500 hover:bg-gray-100 mt-auto"
+            >
+                <FiLogOut className="w-6 h-6" />
+            </button>
+        </div>
+            {/* <div className="w-20 bg-gray-50 border-r border-gray-200 flex flex-col items-center py-6">
                 <button
                     onClick={() => setActiveTab('home')}
                     className={`p-3 rounded-xl mb-4 ${activeTab === 'home' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -57,7 +80,7 @@ const Sidebar = ({activeTab,setActiveTab}) => {
                 >
                     <FiLogOut className="w-6 h-6" />
                 </button>
-            </div>
+            </div> */}
         </>
     )
 }

@@ -9,6 +9,8 @@ import ChatNotificationToast from './NotificationMessage/ChatNotificationToast';
 import { useAppStateContext } from '../Utils/Context/AppStateContext';
 import { updateUserInterestRequestStatus } from '../Utils/Api/InterestRequestApi';
 import { WS_URL } from '../Utils/Axios/AxiosInstance';
+import { useLocation,useNavigate } from 'react-router-dom';
+
 
 
 
@@ -19,6 +21,10 @@ const Navbar = () => {
     const [loading, setLoading] = useState(true);
     const userId = localStorage.getItem('userId')
     const access = localStorage.getItem('access_token')
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    
     
     const {users, setUsers, pendingRequests, setPendingRequests, pendingRequestCount, setPendingRequestCount} = useAppStateContext();
 
@@ -45,6 +51,8 @@ const Navbar = () => {
 
 
 
+
+
     useEffect(() => {
         if (!userId || users.length === 0) return;
 
@@ -57,19 +65,21 @@ const Navbar = () => {
         ws.onmessage = (event) => {
 
             const data = JSON.parse(event.data);
-            console.log('Received message ', data);
-
+        
             const { type, content, username, timestamp, updated_data } = data.message;
 
             if (type === 'chat_notification') {
-                console.log(' Got new message from', username, ':', content);
-                toast.custom((t) => (
-                    <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
-                ), {
-                    duration: 3000,
-                    position: 'top-right',
-                });
-
+               
+                if (!location.pathname.startsWith('/chat')) { 
+                    
+                    toast.custom((t) => (
+                        <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
+                    ), {
+                        duration: 3000,
+                        position: 'top-right',
+                    });
+                }
+  
             } else if (type === 'interest_notification') {
                 toast.custom((t) => (
                     <ChatNotificationToast username={username} content={content} timestamp={timestamp} />
@@ -79,7 +89,7 @@ const Navbar = () => {
                 })
                 
                 if (updated_data){
-                    console.log('updar respo data', updated_data)
+                   
                     let userToUpdate = null;
 
                     if(updated_data.status === 'pending'){
@@ -100,7 +110,7 @@ const Navbar = () => {
 
                     }
                 )
-                console.log('updated dddddddd , user',updatedUsers)
+                
                 setUsers(updatedUsers)
 
 
@@ -149,7 +159,8 @@ const Navbar = () => {
                         <img
                             src="/chatribe-logo-2.png"
                             alt="Chatribe Logo"
-                            className="h-14 w-24 object-contain"
+                            className="h-14 w-24 object-contain cursor-pointer"
+                            onClick={()=> navigate('/home')}
                         />
                     </div>
 
@@ -229,11 +240,11 @@ const Navbar = () => {
                             </div>
                         )}
 
-                        <div className="ml-3 relative">
+                        {/* <div className="ml-3 relative">
                             <div className="w-8 h-8 rounded-full bg-indigo-400 flex items-center justify-center">
                                 <FiUser className="w-4 h-4" />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
