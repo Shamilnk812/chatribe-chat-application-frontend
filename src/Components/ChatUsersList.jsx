@@ -1,28 +1,31 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import ChatUserItem from './ChatUserItem'
 import { useState, useEffect } from 'react'
-import axiosInstance from '../Utils/Axios/AxiosInstance'
 import { HiUsers } from "react-icons/hi";
+import { fetchChatUserList } from '../Utils/Api/FetchChatUsers';
+import { NotificatoinWebSocketContext } from '../Utils/Context/NotificationWebSocketContext';
+
 
 
 const ChatUsersList = ({ userId, openChat }) => {
 
-  const [chatUsersList, setChatUsersList] = useState([])
-
-  const fetchChatUsersList = async () => {
-    try {
-      const response = await axiosInstance.get(`chat/get-chat-users/${userId}`)
-      setChatUsersList(response.data)
-    } catch (error) {
-      console.error('failded ot fetch chat user list', error)
+  const {chatUsersList, setChatUsersList} = useContext(NotificatoinWebSocketContext)
+  
+  useEffect(()=> {
+    const fetchData = async ()=> {
+      const responseData = await fetchChatUserList(userId)
+      if (Array.isArray(responseData)) {
+      setChatUsersList(responseData)
+      }else{
+        setChatUsersList([])
+      }
     }
-  }
 
-  useEffect(() => {
-    fetchChatUsersList()
-  }, [userId])
+    fetchData();
+  },[userId])
 
 
+  
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -59,3 +62,5 @@ const ChatUsersList = ({ userId, openChat }) => {
 }
 
 export default ChatUsersList
+
+

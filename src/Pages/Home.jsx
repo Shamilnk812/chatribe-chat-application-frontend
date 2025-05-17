@@ -46,6 +46,7 @@ const Home = () => {
 
   useEffect(() => {
     if (userId) {
+      console.log('heeeia')
       fetchAllUsers()
     }
   }, [debouncedSearch, userId])
