@@ -2,6 +2,7 @@ import React from 'react'
 import { FaUserCircle } from 'react-icons/fa';
 import { useAppStateContext } from '../Utils/Context/AppStateContext';
 import { FormatLastSeen } from '../Utils/Helpers/FomatLastSeen';
+import { getAvatarColor } from '../Utils/Helpers/GetAvatarColor';
 
 
 
@@ -11,6 +12,9 @@ const ChatUserItem = ({ chat, userId, openChat }) => {
   const unreadCount = isCurrentUser ? chat.unread_count_user1 : chat.unread_count_user2
   const displayUser = !isCurrentUser ? chat.user1 : chat.user2;
   const isOnline = onlineUsers.includes(displayUser.id.toString())
+  const avatarColor = getAvatarColor(displayUser.username || displayUser.id.toString());
+  const firstLetter = displayUser.username ? displayUser.username.charAt(0).toUpperCase() : 'U';
+
   
   
 
@@ -27,7 +31,9 @@ const ChatUserItem = ({ chat, userId, openChat }) => {
             className="w-full h-full rounded-full object-cover border"
           />
         ) : (
-          <FaUserCircle className=" text-gray-400" />
+           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${avatarColor}`}>
+            {firstLetter}
+          </div>
         )}
 
         {isOnline && (
@@ -38,7 +44,7 @@ const ChatUserItem = ({ chat, userId, openChat }) => {
 
       <div className="flex-1">
         <div className="flex justify-between items-center">
-          <h4 className="font-medium">{displayUser.username}</h4>
+          <h4 className="font-medium text-gray-700">{displayUser.username.charAt(0).toUpperCase() + displayUser.username.slice(1)}</h4>
           <span className="text-xs text-gray-500">{FormatLastSeen(chat.last_message_timestamp)}</span>
         </div>
         <p className="text-sm text-gray-500 truncate">

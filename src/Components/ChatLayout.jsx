@@ -143,7 +143,7 @@ const ChatLayout = () => {
         {/* Chat List - 40% width */}
         <div className="w-2/5 border-r border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold">Messages</h3>
+            <h3 className="text-lg font-semibold"> Messages</h3>
           </div>
 
           <div className="flex-1 overflow-y-auto">
