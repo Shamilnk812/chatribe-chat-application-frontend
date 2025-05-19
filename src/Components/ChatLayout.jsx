@@ -19,11 +19,22 @@ const ChatLayout = () => {
   const { chatUsersList, setChatUsersList } = useContext(NotificatoinWebSocketContext)
   const userId = localStorage.getItem('userId')
   const access = localStorage.getItem('access_token')
+  const { notificationWebSocket } = useContext(NotificatoinWebSocketContext)
 
-  
+
   const openChat = async (recipientUser, roomId) => {
 
     setSelectedUser(recipientUser)
+
+    if (notificationWebSocket && notificationWebSocket.readyState === WebSocket.OPEN) {
+      notificationWebSocket.send(JSON.stringify({
+        action: "mark_as_read",
+        chat_room_id: roomId,
+        'recipient_id': recipientUser.id,
+      }));
+    }
+
+
 
     if (ws) {
       ws.close();
@@ -68,7 +79,7 @@ const ChatLayout = () => {
 
     newWs.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      // console.log('Received message:', data);
+      console.log('Received message:', data);
       setMessages((prevMessages) => [...prevMessages, data])
       const { chat_room_id, content, user, receiver_id, timestamp } = data
 
