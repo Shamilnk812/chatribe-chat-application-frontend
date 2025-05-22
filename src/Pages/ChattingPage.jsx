@@ -2,12 +2,17 @@ import React from 'react'
 import ChatLayout from '../Components/ChatLayout'
 import Navbar from '../Components/Navbar'
 import Sidebar from '../Components/Sidebar'
+import { useAppStateContext } from '../Utils/Context/AppStateContext'
 
 const ChattingPage = () => {
+
+  const {isSidebarOpen, setIsSidebarOpen} = useAppStateContext()
+
+  
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Full-width Navbar */}
-     <Navbar />
+     <Navbar setIsSidebarOpen={setIsSidebarOpen}/>
 
       {/* Main Content - Container */}
       <div className="flex-1 overflow-hidden">
@@ -15,11 +20,10 @@ const ChattingPage = () => {
           <div className="h-full bg-white rounded-xl shadow-sm overflow-hidden flex">
 
            
-          <Sidebar />
+          <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}/>
 
 
             {/* Content Area */}
-   
             <ChatLayout/>
     
 

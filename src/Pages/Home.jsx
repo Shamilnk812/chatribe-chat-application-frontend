@@ -22,14 +22,10 @@ import { useAppStateContext } from '../Utils/Context/AppStateContext';
 const Home = () => {
  
   
-  const {users, setUsers, activeTab, setActiveTab} = useAppStateContext();
+  const {users, setUsers, isSidebarOpen, setIsSidebarOpen} = useAppStateContext();
   const userId = localStorage.getItem('userId')
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 500);
-  // const [users, setUsers] = useState([])
-  // const [activeTab, setActiveTab] = useState('home')
-
-
   const navigate = useNavigate();
 
 
@@ -46,7 +42,6 @@ const Home = () => {
 
   useEffect(() => {
     if (userId) {
-      console.log('heeeia')
       fetchAllUsers()
     }
   }, [debouncedSearch, userId])
@@ -58,21 +53,22 @@ const Home = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Full-width Navbar */}
-      <Navbar />
+      {/* Navbar */}
+      <Navbar setIsSidebarOpen={setIsSidebarOpen}/>
 
       {/* Main Content - Container */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="h-full bg-white rounded-xl shadow-sm overflow-hidden flex">
 
-
-            <Sidebar />
+          {/* Sidebar */}
+            <Sidebar  
+              isSidebarOpen={isSidebarOpen} 
+              setIsSidebarOpen={setIsSidebarOpen} 
+            />
 
 
             {/* Content Area */}
-
-           
               <UserProfileCard
                 users={users}
                 setUsers={setUsers}
@@ -80,7 +76,6 @@ const Home = () => {
                 setSearchQuery={setSearchQuery}
                 fetchAllUsers={fetchAllUsers}
                 userId={userId}
-                setActiveTab={setActiveTab}
               />
           
 

@@ -12,7 +12,7 @@ import { useAppStateContext } from '../Utils/Context/AppStateContext'
 
 
 
-const UserProfileCard = ({users, setUsers, searchQuery, setSearchQuery, fetchAllUsers, userId, setActiveTab}) => {
+const UserProfileCard = ({users, setUsers, searchQuery, setSearchQuery, fetchAllUsers, userId}) => {
 
     // const userId = localStorage.getItem('userId')
     // const [searchQuery, setSearchQuery] = useState('');

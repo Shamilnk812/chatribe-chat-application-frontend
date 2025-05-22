@@ -1,6 +1,7 @@
 import React, { useEffect, useId } from 'react'
 import { useState } from 'react';
 import { FiSearch, FiMessageSquare, FiUser, FiX } from 'react-icons/fi';
+import { IoIosMenu } from "react-icons/io";
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import axiosInstance from '../Utils/Axios/AxiosInstance';
 import { handleInterestRequest } from '../Utils/Api/InterestRequestApi';
@@ -14,7 +15,7 @@ import { useLocation,useNavigate } from 'react-router-dom';
 
 
 
-const Navbar = () => {
+const Navbar = ({setIsSidebarOpen}) => {
 
 
     const [showNotifications, setShowNotifications] = useState(false);
@@ -59,7 +60,13 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Left side - Logo/Brand */}
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-3">
+                        <button
+                            className="block md:hidden p-2 rounded hover:bg-indigo-500"
+                            onClick={() => setIsSidebarOpen(true)}
+                        >
+                            <IoIosMenu className="h-6 w-6" />
+                        </button>
                         <img
                             src="/chatribe-logo-2.png"
                             alt="Chatribe Logo"

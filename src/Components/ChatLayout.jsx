@@ -16,15 +16,18 @@ const ChatLayout = () => {
   const [messages, setMessages] = useState([])
   const [ws, setWs] = useState(null)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [showChatArea, setShowChatArea] = useState(false)
   const { chatUsersList, setChatUsersList } = useContext(NotificatoinWebSocketContext)
   const userId = localStorage.getItem('userId')
   const access = localStorage.getItem('access_token')
   const { notificationWebSocket } = useContext(NotificatoinWebSocketContext)
+  
 
 
   const openChat = async (recipientUser, roomId) => {
 
     setSelectedUser(recipientUser)
+    setShowChatArea(true)
 
     if (notificationWebSocket && notificationWebSocket.readyState === WebSocket.OPEN) {
       notificationWebSocket.send(JSON.stringify({
@@ -145,6 +148,12 @@ const ChatLayout = () => {
     };
   }, [ws]);
 
+  const handleCloseChatArea = ()=> {
+    setShowChatArea(false);
+    setSelectedUser(null);
+
+  }
+
 
 
   return (
@@ -152,7 +161,7 @@ const ChatLayout = () => {
 
       <div className="flex h-full">
         {/* Chat List - 40% width */}
-        <div className="w-2/5 border-r border-gray-200 flex flex-col">
+        <div className={`w-full lg:w-2/5 border-r border-gray-200 flex flex-col lg:block ${showChatArea ? 'hidden': 'block'}`}>
           <div className="p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold"> Messages</h3>
           </div>
@@ -168,12 +177,19 @@ const ChatLayout = () => {
 
 
 
-        <div className="flex-1 flex flex-col">
+        <div className={`w-full lg:w-3/5 flex-1 flex flex-col ${showChatArea ? 'block' : 'hidden lg:block'}`}>
           {/* Chat Header */}
 
           {selectedUser ? (
             <>
-              <ChatArea selectedUser={selectedUser} messages={messages} userId={userId} />
+              <ChatArea 
+                selectedUser={selectedUser} 
+                messages={messages} 
+                userId={userId} 
+                showChatArea={showChatArea} 
+                handleCloseChatArea={handleCloseChatArea}
+                />
+                
               {/* Message Input */}
               <ChatInput handleSendMessage={handleSendMessage} />
             </>
