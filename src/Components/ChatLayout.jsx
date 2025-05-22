@@ -13,14 +13,17 @@ import { NotificatoinWebSocketContext } from '../Utils/Context/NotificationWebSo
 
 const ChatLayout = () => {
 
+  const { chatUsersList, setChatUsersList } = useContext(NotificatoinWebSocketContext)
+  const { notificationWebSocket } = useContext(NotificatoinWebSocketContext)
+  const userId = localStorage.getItem('userId')
+  const access = localStorage.getItem('access_token')
   const [messages, setMessages] = useState([])
   const [ws, setWs] = useState(null)
   const [selectedUser, setSelectedUser] = useState(null)
   const [showChatArea, setShowChatArea] = useState(false)
-  const { chatUsersList, setChatUsersList } = useContext(NotificatoinWebSocketContext)
-  const userId = localStorage.getItem('userId')
-  const access = localStorage.getItem('access_token')
-  const { notificationWebSocket } = useContext(NotificatoinWebSocketContext)
+  const [messagesLoading, setMessagesLoading] = useState(false)
+
+  
   
 
 
@@ -46,7 +49,7 @@ const ChatLayout = () => {
     setupWebSocket(recipientUser.id, access)
 
     try {
-
+      setMessagesLoading(true);
       const response = await axiosInstance.get(`chat/get-messages/${userId}/${recipientUser.id}/`)
       console.log(response.data)
       const data = response.data
@@ -58,6 +61,8 @@ const ChatLayout = () => {
 
     } catch (error) {
       console.error(' filed to fetch user messages ', error)
+    }finally{
+      setMessagesLoading(false);
     }
 
 
@@ -188,6 +193,7 @@ const ChatLayout = () => {
                 userId={userId} 
                 showChatArea={showChatArea} 
                 handleCloseChatArea={handleCloseChatArea}
+                messagesLoading={messagesLoading}
                 />
                 
               {/* Message Input */}

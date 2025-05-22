@@ -4,13 +4,14 @@ import { FaUserCircle } from 'react-icons/fa';
 import { IoMdArrowBack } from "react-icons/io";
 import { getAvatarColor } from '../Utils/Helpers/GetAvatarColor';
 import { useAppStateContext } from '../Utils/Context/AppStateContext';
+import ChatMessageSkeltonAnimation from './Animation/ChatMessageSkeltonAnimation';
 
 
-const ChatArea = ({ selectedUser, messages, userId, showChatArea, handleCloseChatArea }) => {
+const ChatArea = ({ selectedUser, messages, userId, showChatArea, handleCloseChatArea, messagesLoading }) => {
 
 
     const chatArea = useRef(null)
-    const {onlineUsers} = useAppStateContext()
+    const { onlineUsers } = useAppStateContext()
     const avatarColor = getAvatarColor(selectedUser.username)
     const firstLetter = selectedUser.username ? selectedUser.username.charAt(0).toUpperCase() : 'U';
     const isOnline = onlineUsers.includes(selectedUser.id.toString())
@@ -64,19 +65,24 @@ const ChatArea = ({ selectedUser, messages, userId, showChatArea, handleCloseCha
             <div ref={chatArea} className="flex-1 overflow-y-auto p-4 bg-gray-50">
 
                 <div className="space-y-4">
-                    {Array.isArray(messages) && messages
-                        .slice()
-                        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-                        .map((msg, index) => (
-                            <ChatMessage
-                                key={index}
-                                text={msg.content}
-                                sender={msg.user}
-                                userId={userId}
-                                timestamp={msg.timestamp}
-                                seen={msg.seen}
-                            />
-                        ))}
+                    {messagesLoading ? (
+                        <ChatMessageSkeltonAnimation/>
+                    ) : (
+                        Array.isArray(messages) && messages
+                            .slice()
+                            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                            .map((msg, index) => (
+                                <ChatMessage
+                                    key={index}
+                                    text={msg.content}
+                                    sender={msg.user}
+                                    userId={userId}
+                                    timestamp={msg.timestamp}
+                                    seen={msg.seen}
+                                />
+                            ))
+                    )}
+
 
 
                 </div>
