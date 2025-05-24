@@ -63,7 +63,7 @@ const Home = () => {
       {/* Main Content - Container */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="h-full bg-white rounded-md shadow-md border overflow-hidden flex">
+          <div className="h-full bg-white rounded-md shadow-md border border-gray-200 overflow-hidden flex">
 
           {/* Sidebar */}
             <Sidebar  

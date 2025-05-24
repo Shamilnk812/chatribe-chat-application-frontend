@@ -9,11 +9,9 @@ import { toast } from 'sonner'
 import { handleInterestRequest, handleSendInterest } from '../Utils/Api/InterestRequestApi'
 import { useAppStateContext } from '../Utils/Context/AppStateContext'
 import { getAvatarColor } from '../Utils/Helpers/GetAvatarColor'
-
-
-
 import { MdChat } from "react-icons/md";
 import UserProfileCardSkeletonAnimation from './Animation/UserProfileCardSkeltonAnimation'
+import NoUsersFound from './EmptyData/NoUsersFound'
 
 
 
@@ -90,107 +88,116 @@ const UserProfileCard = ({ users, setUsers, searchQuery, setSearchQuery, fetchAl
                         ))
                     ) : (
                         <>
-                            {users.map((user) => (
-                                <div
-                                    key={user.id}
-                                    className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200"
-                                >
-                                    <div className="p-5 flex flex-col items-center">
-                                        {/* Profile Picture */}
-                                        <div className="relative mb-4">
-                                            {user.profile_picture ? (
-                                                <img
-                                                    src={user.profile_picture}
-                                                    alt={user.username}
-                                                    className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
-                                                />
-                                            ) : (
-                                                <div className={`w-16 h-16 rounded-full text-white text-xl flex items-center justify-center  ${getAvatarColor(user.username)}`}>
-                                                    {user.username?.charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
-                                        </div>
 
-                                        {/* Username */}
-                                        <h3 className="text-lg font-semibold text-gray-600 mb-3">
-                                            {/* {user.username} */}
-                                            {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
-                                        </h3>
+                            {users.length === 0 ? (
+                                <NoUsersFound />
+                            ) : (
 
-                                        {/* Action Buttons */}
-                                        <div className="w-full space-y-2">
-                                            {user.interest_status === null && (
-                                                <button
-                                                    className="w-full px-4 py-2 text-sm font-medium rounded-lg border border-fuchsia-500 text-fuchsia-500 hover:text-white hover:bg-gradient-to-r hover:from-fuchsia-500 hover:to-pink-600 transition-all duration-300 ease-in-out flex items-center justify-center gap-2"
-                                                    onClick={() => handleSendInterest(user.id, users, setUsers, userId)}
-                                                >
-                                                    Connect
-                                                </button>
-                                            )}
+                                users.map((user) => (
+                                    <div
+                                        key={user.id}
+                                        className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200"
+                                    >
+                                        <div className="p-5 flex flex-col items-center">
+                                            {/* Profile Picture */}
+                                            <div className="relative mb-4">
+                                                {user.profile_picture ? (
+                                                    <img
+                                                        src={user.profile_picture}
+                                                        alt={user.username}
+                                                        className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
+                                                    />
+                                                ) : (
+                                                    <div className={`w-16 h-16 rounded-full text-white text-xl flex items-center justify-center  ${getAvatarColor(user.username)}`}>
+                                                        {user.username?.charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                            {user.interest_status?.status === 'pending' && (
-                                                <div className="space-y-2">
-                                                    {user.interest_status.sent_by_me ? (
-                                                        <span className="block w-full px-4 py-2 text-sm font-medium text-center text-amber-600 bg-amber-50 rounded-lg border border-amber-100 cursor-not-allowed">
-                                                            Request Sent
+                                            {/* Username */}
+                                            <h3 className="text-lg font-semibold text-gray-600 mb-3">
+                                                {/* {user.username} */}
+                                                {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
+                                            </h3>
+
+                                            {/* Action Buttons */}
+                                            <div className="w-full space-y-2">
+                                                {user.interest_status === null && (
+                                                    <button
+                                                        className="w-full px-4 py-2 text-sm font-medium rounded-lg border border-fuchsia-500 text-fuchsia-500 hover:text-white hover:bg-gradient-to-r hover:from-fuchsia-500 hover:to-pink-600 transition-all duration-300 ease-in-out flex items-center justify-center gap-2"
+                                                        onClick={() => handleSendInterest(user.id, users, setUsers, userId)}
+                                                    >
+                                                        Connect
+                                                    </button>
+                                                )}
+
+                                                {user.interest_status?.status === 'pending' && (
+                                                    <div className="space-y-2">
+                                                        {user.interest_status.sent_by_me ? (
+                                                            <span className="block w-full px-4 py-2 text-sm font-medium text-center text-amber-600 bg-amber-50 rounded-lg border border-amber-100 cursor-not-allowed">
+                                                                Request Sent
+                                                            </span>
+                                                        ) : (
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                <button
+                                                                    onClick={() => handleInterestRequest(user.interest_status.id, 'accepted', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)}
+                                                                    className="px-3 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+                                                                >
+                                                                    Accept
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleInterestRequest(user.interest_status.id, 'rejected', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)}
+                                                                    className="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                                                                >
+                                                                    Ignore
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {user.interest_status?.status === 'accepted' && (
+                                                    <button
+                                                        onClick={() => handleChat(user.id)}
+                                                        className="w-full px-4 py-2 text-sm font-medium rounded-lg border border-teal-500 text-teal-500 hover:text-white hover:bg-gradient-to-r hover:from-teal-500 hover:to-emerald-600 transition-all duration-300 ease-in-out flex items-center justify-center gap-2"
+
+                                                    >
+                                                        <MdChat className="text-lg" /> Message
+                                                    </button>
+                                                )}
+
+                                                {user.interest_status?.status === 'rejected' && (
+                                                    <div className="space-y-2">
+                                                        <span className="block text-xs text-center text-gray-500 mb-1">
+                                                            {user.interest_status.sent_by_me
+                                                                ? 'Request declined'
+                                                                : 'You declined request'}
                                                         </span>
-                                                    ) : (
-                                                        <div className="grid grid-cols-2 gap-2">
+                                                        {user.interest_status.sent_by_me ? (
                                                             <button
+                                                                className="w-full px-4 py-2 text-sm font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                                                                onClick={() => handleSendInterest(user.id, users, setUsers, userId)}
+                                                            >
+                                                                Try Again
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="w-full px-4 py-2 text-sm font-medium bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
                                                                 onClick={() => handleInterestRequest(user.interest_status.id, 'accepted', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)}
-                                                                className="px-3 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
                                                             >
-                                                                Accept
+                                                                Accept Now
                                                             </button>
-                                                            <button
-                                                                onClick={() => handleInterestRequest(user.interest_status.id, 'rejected', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)}
-                                                                className="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                                                            >
-                                                                Ignore
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {user.interest_status?.status === 'accepted' && (
-                                                <button
-                                                    onClick={() => handleChat(user.id)}
-                                                    className="w-full px-4 py-2 text-sm font-medium rounded-lg border border-teal-500 text-teal-500 hover:text-white hover:bg-gradient-to-r hover:from-teal-500 hover:to-emerald-600 transition-all duration-300 ease-in-out flex items-center justify-center gap-2"
-
-                                                >
-                                                    <MdChat className="text-lg" /> Message
-                                                </button>
-                                            )}
-
-                                            {user.interest_status?.status === 'rejected' && (
-                                                <div className="space-y-2">
-                                                    <span className="block text-xs text-center text-gray-500 mb-1">
-                                                        {user.interest_status.sent_by_me
-                                                            ? 'Request declined'
-                                                            : 'You declined request'}
-                                                    </span>
-                                                    {user.interest_status.sent_by_me ? (
-                                                        <button
-                                                            className="w-full px-4 py-2 text-sm font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
-                                                            onClick={() => handleSendInterest(user.id, users, setUsers, userId)}
-                                                        >
-                                                            Try Again
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className="w-full px-4 py-2 text-sm font-medium bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
-                                                            onClick={() => handleInterestRequest(user.interest_status.id, 'accepted', users, setUsers, pendingRequests, setPendingRequests, setPendingRequestCount, userId)}
-                                                        >
-                                                            Accept Now
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            )}
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+
+
+
+                            )}
 
                         </>
 
