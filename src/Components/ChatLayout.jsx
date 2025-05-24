@@ -21,6 +21,7 @@ const ChatLayout = () => {
   const [ws, setWs] = useState(null)
   const [selectedUser, setSelectedUser] = useState(null)
   const [showChatArea, setShowChatArea] = useState(false)
+  const [selectedChatId, setSelectedChatId] = useState(null);
   const [messagesLoading, setMessagesLoading] = useState(false)
 
   
@@ -30,6 +31,7 @@ const ChatLayout = () => {
   const openChat = async (recipientUser, roomId) => {
 
     setSelectedUser(recipientUser)
+    setSelectedChatId(roomId)
     setShowChatArea(true)
 
     if (notificationWebSocket && notificationWebSocket.readyState === WebSocket.OPEN) {
@@ -156,24 +158,29 @@ const ChatLayout = () => {
   const handleCloseChatArea = ()=> {
     setShowChatArea(false);
     setSelectedUser(null);
+    setSelectedChatId(null);
 
   }
 
 
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
+    <div className="flex-1 overflow-y-auto pb-2 pr-1 ">
 
       <div className="flex h-full">
         {/* Chat List - 40% width */}
         <div className={`w-full lg:w-2/5 border-r border-gray-200 flex flex-col lg:block ${showChatArea ? 'hidden': 'block'}`}>
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 ">
             <h3 className="text-lg font-semibold"> Messages</h3>
           </div>
 
           <div className="flex-1 overflow-y-auto">
 
-            <ChatUsersList userId={userId} openChat={openChat} />
+            <ChatUsersList 
+              userId={userId} 
+              openChat={openChat}
+              selectedChatId={selectedChatId}
+            />
 
           </div>
         </div>

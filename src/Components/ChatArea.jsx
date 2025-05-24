@@ -62,7 +62,7 @@ const ChatArea = ({ selectedUser, messages, userId, showChatArea, handleCloseCha
 
 
 
-            <div ref={chatArea} className="flex-1 overflow-y-auto p-4 bg-gray-50">
+            <div ref={chatArea} className="flex-1 overflow-y-auto p-4 bg-gray-100">
 
                 <div className="space-y-4">
                     {messagesLoading ? (

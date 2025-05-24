@@ -45,7 +45,7 @@ const ChatInput = ({ handleSendMessage }) => {
         };
     }, [showEmojiPicker]);
 
-    
+
 
     return (
         <div className="relative p-4 border-t border-gray-200 bg-white">
@@ -59,15 +59,16 @@ const ChatInput = ({ handleSendMessage }) => {
                 </div>
             )}
             <div className="flex items-center">
-                <button className="p-2 text-gray-500 hover:text-gray-700 mr-2">
-                    <FiPaperclip className="w-5 h-5" />
-                </button>
+               
                 <button
                     onClick={toggleEmojiPicker}
                     className="p-2 text-gray-500 hover:text-gray-700 mr-2"
                 >
                     <FiSmile className="w-5 h-5" />
                 </button>
+                 {/* <button className="p-2 text-gray-500 hover:text-gray-700 mr-2">
+                    <FiPaperclip className="w-5 h-5" />
+                </button> */}
 
                 <input
                     type="text"

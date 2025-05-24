@@ -43,7 +43,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     <>
       {/* Sidebar */}
       {/*Common sidebar */}
-      <div className="hidden md:flex w-20 bg-gray-300 border-r border-gray-200 flex-col items-center py-6">
+      <div className="hidden md:flex w-20 bg-gray-200 border-r border-gray-200 flex-col items-center py-6">
         {/* Sidebar Links */}
         <Link to="/home" className={`p-3 rounded-xl mb-4 ${location.pathname === '/home' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500 hover:bg-gray-100'}`}>
           <RiUserSearchLine className="w-6 h-6" />

@@ -56,7 +56,7 @@ const Navbar = ({setIsSidebarOpen}) => {
 
 
     return (
-        <nav className="w-full bg-indigo-600 text-white shadow-lg">
+        <nav className="w-full bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-800 text-white shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Left side - Logo/Brand */}

@@ -80,8 +80,9 @@ export const updateUserInterestRequestStatus = (users, receiver, interestStatus)
         }
     };
 
-
-    return users.map(user => 
+    const result = users.map(user => 
         user.id === updatedUser.id ? updatedUser : user
     );
+    
+    return result;
 }

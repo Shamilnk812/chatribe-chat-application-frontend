@@ -6,7 +6,7 @@ import { getAvatarColor } from '../Utils/Helpers/GetAvatarColor';
 
 
 
-const ChatUserItem = ({ chat, userId, openChat }) => {
+const ChatUserItem = ({ chat, userId, openChat, selectedChatId }) => {
   const { onlineUsers } = useAppStateContext();
   const isCurrentUser = chat.user1.id === Number(userId);
   const unreadCount = isCurrentUser ? chat.unread_count_user1 : chat.unread_count_user2
@@ -14,13 +14,18 @@ const ChatUserItem = ({ chat, userId, openChat }) => {
   const isOnline = onlineUsers.includes(displayUser.id.toString())
   const avatarColor = getAvatarColor(displayUser.username || displayUser.id.toString());
   const firstLetter = displayUser.username ? displayUser.username.charAt(0).toUpperCase() : 'U';
+  const isSelected = chat.id === selectedChatId;
 
   
   
 
   return (
     <div
-      className="flex items-center p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50"
+      className={`flex items-center p-4 border-b border-gray-200 cursor-pointer  ${
+        isSelected 
+          ? 'bg-indigo-50 hover:bg-indigo-100' 
+          : 'hover:bg-gray-50'
+      }`}
       onClick={() => openChat(displayUser, chat.id)}
     >
       <div className="relative mr-3">

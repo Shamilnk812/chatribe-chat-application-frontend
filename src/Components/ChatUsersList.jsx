@@ -8,7 +8,7 @@ import EmptyChatList from './EmptyData/EmptyChatList';
 
 
 
-const ChatUsersList = ({ userId, openChat }) => {
+const ChatUsersList = ({ userId, openChat, selectedChatId }) => {
 
   const { chatUsersList, setChatUsersList } = useContext(NotificatoinWebSocketContext)
   const [loading, setLoading] = useState(false);
@@ -53,6 +53,7 @@ const ChatUsersList = ({ userId, openChat }) => {
               key={index}
               userId={userId}
               openChat={openChat}
+              selectedChatId={selectedChatId}
             />
           ))
         ) : (

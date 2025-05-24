@@ -52,9 +52,10 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
             const { type } = data
 
             if (type === 'interest_notification') {
-                toast.custom((t) => {
-                    <ChatNotificationToast username={data.username} content={data.content} timestamp={data.timestamp} />
-                }, {
+
+                toast.custom((t) => (
+                    <ChatNotificationToast username={data.username} content={data.content} timestamp={data.timestamp} t={t}/>
+                ), {
                     duration: 3000,
                     position: 'top-right'
                 });
@@ -70,12 +71,14 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
 
                     const sentByMe = parseInt(userId) === data.updated_data.sender.id;
 
-                    const updatedUsers = updateUserInterestRequestStatus(users, userToUpdate, {
-                        id: data.updated_data.id,
-                        status: data.updated_data.status,
-                        sent_by_me: sentByMe,
+                    setUsers((prevUsers) => {
+                        const updatedUsers = updateUserInterestRequestStatus(prevUsers, userToUpdate, {
+                            id: data.updated_data.id,
+                            status: data.updated_data.status,
+                            sent_by_me: sentByMe,
+                        });
+                        return updatedUsers;
                     });
-                    setUsers(updatedUsers);
 
 
                     if (data.updated_data.status === 'pending') {
