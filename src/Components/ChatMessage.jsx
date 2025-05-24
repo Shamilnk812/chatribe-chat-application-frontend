@@ -6,7 +6,7 @@ const ChatMessage = ({ text, sender, userId, timestamp, seen }) => {
 
     const senderId = typeof sender === 'object' ? sender?.id : sender;
     const isSender = senderId === Number(userId);
-    console.log('seen', seen)
+    
 
 
     return (

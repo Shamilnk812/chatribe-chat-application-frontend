@@ -16,16 +16,15 @@ const ChatUserItem = ({ chat, userId, openChat, selectedChatId }) => {
   const firstLetter = displayUser.username ? displayUser.username.charAt(0).toUpperCase() : 'U';
   const isSelected = chat.id === selectedChatId;
 
-  
-  
+
+
 
   return (
     <div
-      className={`flex items-center p-4 border-b border-gray-200 cursor-pointer  ${
-        isSelected 
-          ? 'bg-indigo-50 hover:bg-indigo-100' 
+      className={`flex items-center p-4 border-b border-gray-200 cursor-pointer  ${isSelected
+          ? 'bg-indigo-50 hover:bg-indigo-100'
           : 'hover:bg-gray-50'
-      }`}
+        }`}
       onClick={() => openChat(displayUser, chat.id)}
     >
       <div className="relative mr-3">
@@ -36,14 +35,14 @@ const ChatUserItem = ({ chat, userId, openChat, selectedChatId }) => {
             className="w-full h-full rounded-full object-cover border"
           />
         ) : (
-           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${avatarColor}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${avatarColor}`}>
             {firstLetter}
           </div>
         )}
 
         {isOnline && (
-        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-         )} 
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+        )}
 
       </div>
 
@@ -53,11 +52,13 @@ const ChatUserItem = ({ chat, userId, openChat, selectedChatId }) => {
           <span className="text-xs text-gray-500">{FormatLastSeen(chat.last_message_timestamp)}</span>
         </div>
         <p className="text-sm text-gray-500 truncate">
-          {chat.last_message.length > 30
-          ? `${chat.last_message.slice(0, 30)}...`
-          : chat.last_message}</p>
+          {chat.last_message
+            ? (chat.last_message.length > 30
+              ? `${chat.last_message.slice(0, 30)}...`
+              : chat.last_message)
+            : 'No messages yet'}</p>
       </div>
-      
+
 
       {unreadCount > 0 && (
         <div className="ml-2 w-5 h-5 bg-indigo-600 text-white text-xs rounded-full flex items-center justify-center">

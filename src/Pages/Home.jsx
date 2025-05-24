@@ -26,17 +26,21 @@ const Home = () => {
   const userId = localStorage.getItem('userId')
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 500);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
 
   const fetchAllUsers = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
       console.log('users fetchiiiin ', response.data)
 
       setUsers(response.data)
     } catch (error) {
       console.error('sometheing', error)
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -76,6 +80,7 @@ const Home = () => {
                 setSearchQuery={setSearchQuery}
                 fetchAllUsers={fetchAllUsers}
                 userId={userId}
+                loading={loading}
               />
           
 
