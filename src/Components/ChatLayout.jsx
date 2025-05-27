@@ -77,7 +77,6 @@ const ChatLayout = () => {
       ws.close();
     }
 
-    console.log("chat with user id is :", chatWithUserId)
     const socketUrl = `${WS_URL}/chat/${chatWithUserId}/?token=${access}`;
     const newWs = new WebSocket(socketUrl);
 
@@ -155,7 +154,12 @@ const ChatLayout = () => {
     };
   }, [ws]);
 
+  
   const handleCloseChatArea = ()=> {
+    if(ws){
+      ws.close();
+      setWs(null);
+    }
     setShowChatArea(false);
     setSelectedUser(null);
     setSelectedChatId(null);

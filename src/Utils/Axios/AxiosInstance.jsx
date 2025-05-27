@@ -1,11 +1,11 @@
 import axios from "axios";
 import { toast } from "sonner";
 
-// export const API_URL = 'https://chatribe-chat-application-backend.onrender.com/api';
-export const API_URL = 'http://localhost:8000/api';
+export const API_URL = 'https://chatribe-chat-application-backend.onrender.com/api';
+// export const API_URL = 'http://localhost:8000/api';
 
-// export const WS_URL = 'wss://chatribe-chat-application-backend.onrender.com/ws';
-export const WS_URL = 'ws://localhost:8000/ws';
+export const WS_URL = 'wss://chatribe-chat-application-backend.onrender.com/ws';
+// export const WS_URL = 'ws://localhost:8000/ws';
 
 
 const axiosInstance = axios.create({
@@ -35,6 +35,7 @@ const refreshToken = async () => {
     console.error('Refresh token expired or invalid');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('userId');
     toast.error('Session expired. Please login again.');
     window.location.href = '/login';
     return null;

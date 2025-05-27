@@ -1,14 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import { FaUserCog } from "react-icons/fa";
-import { IoChatbubblesSharp } from "react-icons/io5";
-import { FiSearch, FiMessageSquare, FiUser, FiLogOut, FiSend, FiHome } from 'react-icons/fi';
-import { IoMdNotificationsOutline } from 'react-icons/io';
-import { RiUserSearchLine } from 'react-icons/ri';
-import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../Utils/Axios/AxiosInstance';
 import { toast } from 'sonner';
-import { FaUserCircle } from 'react-icons/fa'
 import Navbar from '../Components/Navbar';
 import Sidebar from '../Components/Sidebar';
 import useDebounce from '../Utils/Hooks/UseDebounce';
@@ -27,15 +20,14 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  
 
 
   const fetchAllUsers = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`/user/get-all-users/${userId}/?search=${debouncedSearch}`)
-      console.log('users fetchiiiin ', response.data)
-
+      
       setUsers(response.data)
     } catch (error) {
       console.error('sometheing', error)

@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom'
 import LandingPage from './Pages/LandingPage'
 import SignUp from './Pages/SignUp'
 import Login from './Pages/Login'
@@ -12,37 +12,42 @@ import { AppStateContextProvider } from './Utils/Context/AppStateContext'
 import { NotificatoinWebSocketProvider } from './Utils/Context/NotificationWebSocketContext'
 
 function App() {
- 
+
 
   return (
     <>
       <Toaster richColors position="top-right" duration={2000} />
       <Router>
-      
-      <AppStateContextProvider>
-        <NotificatoinWebSocketProvider>
-        
+
+        <AppStateContextProvider>
+
+
           <Routes>
-            <Route element={<UserLogoutAuth/>}>
-              <Route path='/'element={<LandingPage/>} />
-              <Route path='/signup' element={<SignUp/>}/>
-              <Route path='/login' element={<Login/>}/>
-            </Route>
-           
-            <Route element={<UserLogingAuth/>} >
-              
-              <Route path='/home' element={<Home/>}/>
-              <Route path='/chat' element={<ChattingPage/>}/>
-             
-            </Route>
-          
             
+            <Route element={<UserLogoutAuth />}>
+              <Route path='/' element={<LandingPage />} />
+              <Route path='/signup' element={<SignUp />} />
+              <Route path='/login' element={<Login />} />
+            </Route>
+
+            <Route element={<UserLogingAuth />}>
+              <Route
+                element={
+                  <NotificatoinWebSocketProvider>
+                    <Outlet />
+                  </NotificatoinWebSocketProvider>
+                }
+              >
+                <Route path="/home" element={<Home />} />
+                <Route path="/chat" element={<ChattingPage />} />
+              </Route>
+            </Route>
+
           </Routes>
-          </NotificatoinWebSocketProvider>
-       
-      </AppStateContextProvider>
-     
-       </Router>
+
+        </AppStateContextProvider>
+
+      </Router>
     </>
   )
 }

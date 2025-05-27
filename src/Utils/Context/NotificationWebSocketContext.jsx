@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState, useContext, Children, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import { useAppStateContext } from "./AppStateContext";
 import axiosInstance, { WS_URL } from "../Axios/AxiosInstance";
 import ChatNotificationToast from "../../Components/NotificationMessage/ChatNotificationToast";
@@ -18,15 +17,14 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
 
     const userId = localStorage.getItem('userId');
     const access = localStorage.getItem('access_token');
-    const location = useLocation();
     const wsRef = useRef(null);
     const [chatUsersList, setChatUsersList] = useState([]);
     const chatUsersRef = useRef([]);
 
     const { users, setUsers, setPendingRequests, setPendingRequestCount, setOnlineUsers } = useAppStateContext();
-    
-   
-      useEffect(() => {
+
+
+    useEffect(() => {
         chatUsersRef.current = chatUsersList;
     }, [chatUsersList]);
 
@@ -54,7 +52,11 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
             if (type === 'interest_notification') {
 
                 toast.custom((t) => (
-                    <ChatNotificationToast username={data.username} content={data.content} timestamp={data.timestamp} t={t}/>
+                    <ChatNotificationToast 
+                        username={data.username} 
+                        content={data.content} 
+                        timestamp={data.timestamp} t={t} 
+                    />
                 ), {
                     duration: 3000,
                     position: 'top-right'
@@ -100,24 +102,37 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
                     }
                 }
 
+            } else if (type === 'chat_notification') {
+                
+                    toast.custom((t) => (
+                        <ChatNotificationToast 
+                            username={data.username} 
+                            content={data.content} 
+                            timestamp={data.timestamp} t={t} 
+                        />
+                    ), {
+                        duration: 3000,
+                        position: 'top-right'
+                    });
+
             }
             else if (type === 'unread_update') {
 
                 try {
-                   
-                     if (chatUsersRef.current.length === 0) {
+
+                    if (chatUsersRef.current.length === 0) {
                         const chatUsers = await fetchChatUserList(userId);
-                        
+
                         if (chatUsers) {
                             setChatUsersList(chatUsers);
-                            chatUsersRef.current = chatUsers; 
+                            chatUsersRef.current = chatUsers;
                         }
                     }
-                    
+
                     // Check if chat room already exist ?
                     const chatRoomExists = chatUsersRef.current.some(
                         user => user?.id === data.chat_room_id
-                        );
+                    );
 
                     // If not exists, fetch the single chat user
                     if (!chatRoomExists) {
@@ -159,12 +174,12 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
                         });
 
                         return filteredChatUsers;
-                        
+
                     });
                 } catch (error) {
                     console.error('Error handling unread_update:', error);
                 }
-            }else if(type === 'online_users'){
+            } else if (type === 'online_users') {
                 setOnlineUsers(data.online_users)
             }
 
@@ -175,7 +190,7 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
         };
 
 
-      
+
 
 
         ws.onclose = () => {
@@ -190,7 +205,7 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
 
     }, [])
 
-    
+
     return (
         <NotificatoinWebSocketContext.Provider value={{ notificationWebSocket: wsRef.current, chatUsersList, setChatUsersList }}>
             {children}

@@ -6,9 +6,7 @@ import { IoMdNotificationsOutline } from 'react-icons/io';
 import axiosInstance from '../Utils/Axios/AxiosInstance';
 import { handleInterestRequest } from '../Utils/Api/InterestRequestApi';
 import { useAppStateContext } from '../Utils/Context/AppStateContext';
-import { updateUserInterestRequestStatus } from '../Utils/Api/InterestRequestApi';
-import { WS_URL } from '../Utils/Axios/AxiosInstance';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 
@@ -22,7 +20,6 @@ const Navbar = ({ setIsSidebarOpen }) => {
     const [loading, setLoading] = useState(true);
     const userId = localStorage.getItem('userId')
     const access = localStorage.getItem('access_token')
-    const location = useLocation();
     const navigate = useNavigate();
 
 
