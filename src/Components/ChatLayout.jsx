@@ -53,7 +53,6 @@ const ChatLayout = () => {
     try {
       setMessagesLoading(true);
       const response = await axiosInstance.get(`chat/get-messages/${userId}/${recipientUser.id}/`)
-      console.log(response.data)
       const data = response.data
       if (Array.isArray(data)) {
         setMessages(data);
@@ -88,7 +87,7 @@ const ChatLayout = () => {
 
     newWs.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('Received message:', data);
+      // console.log('Received message:', data);
       setMessages((prevMessages) => [...prevMessages, data])
       const { chat_room_id, content, user, receiver_id, timestamp } = data
 

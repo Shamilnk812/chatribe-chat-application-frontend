@@ -29,7 +29,6 @@ const Login = () => {
             setProcessing(true);
             try {
                 const response = await axiosInstance.post('/user/login/', values)
-                console.log(response.data)
                 const { access_token, refresh_token, user_id } = response.data
                 localStorage.setItem('access_token', access_token);
                 localStorage.setItem('refresh_token', refresh_token);

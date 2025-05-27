@@ -43,7 +43,6 @@ export const NotificatoinWebSocketProvider = ({ children }) => {
 
         ws.onmessage = async (event) => {
             const response = JSON.parse(event.data);
-            console.log(response)
 
             const data = response.message || response;
 

@@ -22,7 +22,6 @@ const refreshToken = async () => {
     const response = await axios.post(`${API_URL}/user/token/refresh/`, {
       refresh: refresh,
     });
-    console.log('newww token', response.data)
     const newAccessToken = response.data.access;
     const newRefreshToken = response.data.refresh;
     localStorage.setItem('access_token', newAccessToken);
